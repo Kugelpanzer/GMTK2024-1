@@ -1,0 +1,51 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directories
+**/_Build/
+**/build_/
+**/build/
+**/build.out/
+**/Build/
+**/Build.out/
+**/build.temp/
+**/Build.Temp/
+
+# IDE files
+**/.vs/
+**/.vscode/
+
+# Misc
+**/.DS_Store
+**/CMakeUserPresets.json
+**/CMakeLists.txt.user
