@@ -16,7 +16,7 @@ std::unique_ptr<spe::GameContext> CreateGameContext() {
     auto ctx = std::make_unique<spe::GameContext>(spe::GameContext::RuntimeConfig{});
     ctx->setToMode(spe::GameContext::Mode::GameMaster);
 
-    auto winMgr = std::make_unique<spe::DefaultWindowManager>(ctx->getQAORuntime(), 0);
+    auto winMgr = std::make_unique<spe::DefaultWindowManager>(ctx->getQAORuntime().nonOwning(), 0);
     winMgr->setToNormalMode(
         spe::WindowManagerInterface::WindowConfig{
             hg::win::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT},
