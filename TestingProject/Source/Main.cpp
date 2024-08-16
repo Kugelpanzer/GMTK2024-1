@@ -1,47 +1,35 @@
-#include <Hobgoblin/Logging.hpp>
-#include <SPeMPE/SPeMPE.hpp>
 
-#include <cstdlib>
-#include <memory>
+#include <Hobgoblin/HGExcept.hpp>
 
-using namespace jbatnozic;
-namespace hg = jbatnozic::hobgoblin;
-namespace spe = jbatnozic::spempe;
+#include "Context_factory.hpp"
+#include "Engine.hpp"
 
-constexpr auto WINDOW_WIDTH  = 640;
-constexpr auto WINDOW_HEIGHT = 320;
-constexpr auto FRAME_RATE = 60;
+int InitializeAndRunClient() {
+    auto ctx = CreateBasicClientContext();
+    return ctx->runFor(-1);
+}
 
-std::unique_ptr<spe::GameContext> CreateGameContext() {
-    auto ctx = std::make_unique<spe::GameContext>(spe::GameContext::RuntimeConfig{});
-    ctx->setToMode(spe::GameContext::Mode::GameMaster);
-
-    auto winMgr = std::make_unique<spe::DefaultWindowManager>(ctx->getQAORuntime().nonOwning(), 0);
-    winMgr->setToNormalMode(
-        spe::WindowManagerInterface::WindowConfig{
-            hg::win::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT},
-            "SPeMPE Multiplayer Foundation",
-            hg::win::WindowStyle::Default
-        },
-        spe::WindowManagerInterface::MainRenderTextureConfig{ {WINDOW_WIDTH, WINDOW_HEIGHT} },
-        spe::WindowManagerInterface::TimingConfig{
-            spe::FrameRate{FRAME_RATE},
-            spe::PREVENT_BUSY_WAIT_ON,
-            spe::VSYNC_OFF
-        });
-    winMgr->setStopIfCloseClicked(true);
-    ctx->attachAndOwnComponent(std::move(winMgr));
-
-    return ctx;
+int InitializeAndRunServer(int argc, char* argv[]) {
+    // clang-format off
+    const ServerGameParams params{
+        .playerCount = 5,
+        .portNumber  = 8888
+    };
+    auto ctx = CreateServerContext(params);
+    return ctx->runFor(-1);
+    // clang-format on
 }
 
 int main(int argc, char* argv[]) try {
-    auto ctx = CreateGameContext();
-    
-    ctx->runFor(-1);
-
-    return EXIT_SUCCESS;
-}
-catch (const std::exception& ex) {
-    HG_LOG_ERROR("asdf", "Error: {}", ex.what());
+    if (argc <= 1) {
+        return InitializeAndRunClient();
+    } else {
+        return InitializeAndRunServer(argc, argv);
+    }
+} catch (const hg::TracedException& ex) {
+    HG_LOG_FATAL(LOG_ID, "Traced exception caught: {}", ex.getFormattedDescription());
+    return EXIT_FAILURE;
+} catch (const std::exception& ex) {
+    HG_LOG_FATAL(LOG_ID, "Exception caught: {}", ex.what());
+    return EXIT_FAILURE;
 }
