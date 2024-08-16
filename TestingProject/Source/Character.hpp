@@ -38,6 +38,7 @@ private:
     void _syncCreateImpl(spe::SyncControlDelegate& aSyncCtrl) const override;
     void _syncUpdateImpl(spe::SyncControlDelegate& aSyncCtrl) const override;
     void _syncDestroyImpl(spe::SyncControlDelegate& aSyncCtrl) const override;
+    hg::alvin::CollisionDelegate _initColDelegate();
 };
 
 // clang-format on

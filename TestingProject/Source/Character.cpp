@@ -103,5 +103,15 @@ void CharacterObject::_syncUpdateImpl(spe::SyncControlDelegate& aSyncCtrl) const
 void CharacterObject::_syncDestroyImpl(spe::SyncControlDelegate& aSyncCtrl) const {
     SPEMPE_SYNC_DESTROY_DEFAULT_IMPL(CharacterObject, aSyncCtrl);
 }
+ hg::alvin::CollisionDelegate CharacterObject::_initColDelegate() {
+        auto builder = hg::alvin::CollisionDelegateBuilder{};
+
+        builder.addInteraction<LootInterface>(
+            hg::alvin::COLLISION_POST_SOLVE,
+            [this](LootInterface& aHealth, const hg::alvin::CollisionData& aCollisionData) {
+                //DO INTERACTION
+            });
+        return builder.finalize();
+  }
 
 // clang-format on
