@@ -6,24 +6,24 @@
 
 #include "Character.hpp"
 
-AutodiffPlayerCharacter::AutodiffPlayerCharacter(QAO_RuntimeRef aRuntimeRef,
+CharacterObject::CharacterObject(QAO_RuntimeRef aRuntimeRef,
                                                  spe::RegistryId aRegId,
                                                  spe::SyncId aSyncId)
     : SyncObjSuper{aRuntimeRef, SPEMPE_TYPEID_SELF, PRIORITY_PLAYERAVATAR,
-                   "AutodiffPlayerCharacter", aRegId, aSyncId}
+                   "CharacterObject", aRegId, aSyncId}
 {
     if (isMasterObject()) {
         _getCurrentState().initMirror();
     }
 }
 
-AutodiffPlayerCharacter::~AutodiffPlayerCharacter() {
+CharacterObject::~CharacterObject() {
     if (isMasterObject()) {
         doSyncDestroy();
     }
 }
 
-void AutodiffPlayerCharacter::init(int aOwningPlayerIndex, float aX, float aY) {
+void CharacterObject::init(int aOwningPlayerIndex, float aX, float aY) {
     assert(isMasterObject());
 
     auto& self = _getCurrentState();
@@ -32,7 +32,7 @@ void AutodiffPlayerCharacter::init(int aOwningPlayerIndex, float aX, float aY) {
     self.owningPlayerIndex = aOwningPlayerIndex;
 }
 
-void AutodiffPlayerCharacter::_eventUpdate1(spe::IfMaster) {
+void CharacterObject::_eventUpdate1(spe::IfMaster) {
     if (ctx().getGameState().isPaused) return;
 
     auto& self = _getCurrentState();
@@ -59,11 +59,11 @@ void AutodiffPlayerCharacter::_eventUpdate1(spe::IfMaster) {
     }
 }
 
-void AutodiffPlayerCharacter::_eventPostUpdate(spe::IfMaster) {
+void CharacterObject::_eventPostUpdate(spe::IfMaster) {
     _getCurrentState().commit();
 }
 
-void AutodiffPlayerCharacter::_eventDraw1() {
+void CharacterObject::_eventDraw1() {
     if (this->isDeactivated()) return;
 
     #define NUM_COLORS 12
@@ -90,18 +90,18 @@ void AutodiffPlayerCharacter::_eventDraw1() {
     ccomp<MWindow>().getCanvas().draw(circle);
 }
 
-SPEMPE_GENERATE_DEFAULT_SYNC_HANDLERS(AutodiffPlayerCharacter, (CREATE, UPDATE, DESTROY));
+SPEMPE_GENERATE_DEFAULT_SYNC_HANDLERS(CharacterObject, (CREATE, UPDATE, DESTROY));
 
-void AutodiffPlayerCharacter::_syncCreateImpl(spe::SyncControlDelegate& aSyncCtrl) const {
-    SPEMPE_SYNC_CREATE_DEFAULT_IMPL(AutodiffPlayerCharacter, aSyncCtrl);
+void CharacterObject::_syncCreateImpl(spe::SyncControlDelegate& aSyncCtrl) const {
+    SPEMPE_SYNC_CREATE_DEFAULT_IMPL(CharacterObject, aSyncCtrl);
 }
 
-void AutodiffPlayerCharacter::_syncUpdateImpl(spe::SyncControlDelegate& aSyncCtrl) const {
-    SPEMPE_SYNC_UPDATE_DEFAULT_IMPL(AutodiffPlayerCharacter, aSyncCtrl);
+void CharacterObject::_syncUpdateImpl(spe::SyncControlDelegate& aSyncCtrl) const {
+    SPEMPE_SYNC_UPDATE_DEFAULT_IMPL(CharacterObject, aSyncCtrl);
 }
 
-void AutodiffPlayerCharacter::_syncDestroyImpl(spe::SyncControlDelegate& aSyncCtrl) const {
-    SPEMPE_SYNC_DESTROY_DEFAULT_IMPL(AutodiffPlayerCharacter, aSyncCtrl);
+void CharacterObject::_syncDestroyImpl(spe::SyncControlDelegate& aSyncCtrl) const {
+    SPEMPE_SYNC_DESTROY_DEFAULT_IMPL(CharacterObject, aSyncCtrl);
 }
 
 // clang-format on

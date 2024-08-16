@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Engine.hpp"
+#include "Collisions.hpp"
 
 #include <cstdint>
 
@@ -19,13 +20,13 @@ SPEMPE_DEFINE_AUTODIFF_STATE(AutodiffPlayerCharacter_VisibleState,
  * Implementation of a synchronized object with autodiff state optimization enabled.
  * (members that didn't change are automatically detected and are not sent to clients).
  */
-class AutodiffPlayerCharacter
-    : public spe::SynchronizedObject<AutodiffPlayerCharacter_VisibleState>
+class CharacterObject
+    : public spe::SynchronizedObject<AutodiffPlayerCharacter_VisibleState>, public CharacterInterface
 {
 public:
-    AutodiffPlayerCharacter(QAO_RuntimeRef aRuntimeRef, spe::RegistryId aRegId, spe::SyncId aSyncId);
+    CharacterObject(QAO_RuntimeRef aRuntimeRef, spe::RegistryId aRegId, spe::SyncId aSyncId);
 
-    ~AutodiffPlayerCharacter() override;
+    ~CharacterObject() override;
 
     void init(int aOwningPlayerIndex, float aX, float aY);
 
