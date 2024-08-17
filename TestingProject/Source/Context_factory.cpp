@@ -5,6 +5,7 @@
 
 #include "Lobby_frontend_manager.hpp"
 #include "Player_controls.hpp"
+#include "Character.hpp"
 
 #include "Main_menu_manager.hpp" // TODO(temp.)
 
@@ -117,7 +118,11 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
     // auto gpMgr = std::make_unique<MainGameplayManager>(context->getQAORuntime().nonOwning(),
     //                                                    PRIORITY_GAMEPLAYMGR);
     // context->attachAndOwnComponent(std::move(gpMgr));
+    QAO_PCreate<CharacterObject>(context->getQAORuntime(),
+                                 context->getComponent<MNetworking>().getRegistryId(),
+                                 spe::SYNC_ID_NEW);
 
+    
     return context;
 }
 
