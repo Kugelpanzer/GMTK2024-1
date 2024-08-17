@@ -21,16 +21,20 @@
         </div>
 
         <!-- WINDOW INTERIOR -->
-        <div id="window-interior-holder">
+        <div id="window-interior-holder" data-model="mainmenu-model">
+
+            <div data-if="debugMode == true" class="window-contents">
+                <p style="color: red;">!!!!! DEBUG MODE !!!!!</p>
+            </div>
 
             <!-- FORM -->
-            <form data-model="mainmenu-model" onsubmit="submit_form" data-event-change="">
+            <form onsubmit="submit_form" data-event-change="">
                 <div class="window-contents">
                     <p>
                         <p>Name:</p><br/>
-                        <input class="text-box" id="playerName" type="text" name="playerName" value="" /><br/>
+                        <input class="text-box" id="playerName" type="text" name="playerName" value="Player123" /><br/>
                         <br/><p>Server IP Address:</p><br/>
-                        <input class="text-box" id="serverIp"   type="text" name="serverIp"   value="" /><br/>
+                        <input class="text-box" id="serverIp"   type="text" name="serverIp"   value="localhost" /><br/>
                         <br/><p>Server Port:</p><br/>
                         <input class="text-box" id="serverPort" type="text" name="serverPort" value="8888" /><br/>
                         <br/><p>Local Port:</p><br/>

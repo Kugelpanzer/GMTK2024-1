@@ -5,6 +5,21 @@
 #include "Context_factory.hpp"
 #include "Engine.hpp"
 
+int InitializeAndRunDebug() {
+    auto ctx = CreateBasicClientContext();
+
+    const ServerGameParams serverParams{
+        .playerCount = 2,
+        .portNumber  = 8888
+    };
+    ctx->attachChildContext(CreateServerContext(serverParams));
+    ctx->startChildContext(-1);
+
+    const int status = ctx->runFor(-1);
+    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    return status;
+}
+
 int InitializeAndRunClient() {
     auto ctx = CreateBasicClientContext();
     const int status = ctx->runFor(-1);
@@ -30,9 +45,17 @@ int main(int argc, char* argv[]) try {
     RN_IndexHandlers();
 
     if (argc <= 1) {
-        return InitializeAndRunClient();
+        return InitializeAndRunDebug();
     } else {
-        return InitializeAndRunServer(argc, argv);
+        const std::string mode = argv[1];
+        if (mode == "client") {
+            return InitializeAndRunClient();
+        } else if (mode == "server") {
+            return InitializeAndRunServer(argc, argv);
+        } else {
+           HG_LOG_ERROR(LOG_ID, "Unknown mode provided ({}), exiting.", mode);
+           return EXIT_FAILURE;
+        }
     }
 } catch (const hg::TracedException& ex) {
     HG_LOG_FATAL(LOG_ID, "Traced exception caught: {}", ex.getFormattedDescription());
