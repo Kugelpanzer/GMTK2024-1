@@ -1,4 +1,5 @@
 
+#include <Hobgoblin/Logging.hpp>
 #include <Hobgoblin/HGExcept.hpp>
 
 #include "Context_factory.hpp"
@@ -21,6 +22,9 @@ int InitializeAndRunServer(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) try {
+    hg::log::SetMinimalLogSeverity(hg::log::Severity::Info);
+    RN_IndexHandlers();
+
     if (argc <= 1) {
         return InitializeAndRunClient();
     } else {

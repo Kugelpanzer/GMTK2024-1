@@ -6,6 +6,7 @@
 #include <Hobgoblin/Logging.hpp>
 #include <Hobgoblin/RigelNet_macros.hpp>
 #include <Hobgoblin/Utility/No_copy_no_move.hpp>
+#include <RmlUi/Core.h>
 
 namespace {
 template <class T>

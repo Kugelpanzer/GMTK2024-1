@@ -1,0 +1,52 @@
+<rml>
+    <head>
+        <link type="text/css" href="main_menu.rcss"/>
+        <title>Window</title>
+        <style>
+            body
+            {
+                width: 800dp;
+                height: 600dp;
+
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body class="window">
+
+        <div id="title-bar">
+            <handle move_target="#document">
+                <span id="title">Main Menu</span>
+            </handle>
+        </div>
+
+        <!-- WINDOW INTERIOR -->
+        <div id="window-interior-holder">
+
+            <!-- FORM -->
+            <form data-model="mainmenu-model" onsubmit="submit_form" data-event-change="">
+                <div class="window-contents">
+                    <p>
+                        <p>Name:</p><br/>
+                        <input class="text-box" id="playerName" type="text" name="playerName" value="" /><br/>
+                        <br/><p>Server IP Address:</p><br/>
+                        <input class="text-box" id="serverIp"   type="text" name="serverIp"   value="" /><br/>
+                        <br/><p>Server Port:</p><br/>
+                        <input class="text-box" id="serverPort" type="text" name="serverPort" value="8888" /><br/>
+                        <br/><p>Local Port:</p><br/>
+                        <input class="text-box" id="localPort"  type="text" name="localPort"  value="auto" /><br/>
+                    </p>
+                    <br/>
+                    <!--p data-if="graphics == 'bad'">Are you sure about this? Bad graphics are just plain <em>bad.</em></p-->
+                    <input type="submit" name="button" value="accept">
+                        <span class="button">
+                            [CONNECT]
+                        </span>
+                    </input>
+                </div>
+		    </form>
+
+        </div>
+
+    </body>
+</rml>

@@ -6,6 +6,8 @@
 #include "Lobby_frontend_manager.hpp"
 #include "Player_controls.hpp"
 
+#include "Main_menu_manager.hpp" // TODO(temp.)
+
 namespace {
 constexpr auto FRAME_RATE = 60;
 constexpr auto TICK_RATE  = 60;
@@ -172,6 +174,11 @@ std::unique_ptr<spe::GameContext> CreateBasicClientContext() {
     Rml::Debugger::SetVisible(true);
 
     context->attachAndOwnComponent(std::move(winMgr));
+
+    // Main menu manager
+    auto mmMgr = QAO_UPCreate<MainMenuManager>(context->getQAORuntime().nonOwning(),
+                                               PRIORITY_MAINMENUMGR);
+    context->attachAndOwnComponent(std::move(mmMgr));
 
     return context;
 }
