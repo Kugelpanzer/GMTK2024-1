@@ -7,6 +7,7 @@
 #include <Hobgoblin/ChipmunkPhysics.hpp>
 
 #include <cstdint>
+#include <memory>
 
 SPEMPE_DEFINE_AUTODIFF_STATE(CharacterObject_VisibleState,
                              SPEMPE_MEMBER(float, x, 0.f),
@@ -30,7 +31,7 @@ public:
     void init(int aOwningPlayerIndex, float aX, float aY);
 
 private:
-    std::optional<hg::alvin::Unibody> _unibody;
+    hg::alvin::Unibody _unibody;
 
     hg::alvin::CollisionDelegate _initColDelegate();
 

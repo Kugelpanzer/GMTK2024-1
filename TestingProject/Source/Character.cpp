@@ -10,23 +10,21 @@ CharacterObject::CharacterObject(QAO_RuntimeRef aRuntimeRef, spe::RegistryId aRe
                    PRIORITY_PLAYERAVATAR,
                    "CharacterObject",
                    aRegId,
-                   aSyncId} {
+                   aSyncId}
+    , _unibody{[this]() {
+                   return _initColDelegate();
+               },
+               [this]() {
+                   return hg::alvin::Body::createKinematic();
+               },
+               [this]() {
+                   static constexpr cpFloat WIDTH  = 256.0;
+                   static constexpr cpFloat HEIGHT = 128.0;
+                   return hg::alvin::Shape::createBox(_unibody.body, WIDTH, HEIGHT);
+               }} {
     if (isMasterObject()) {
         _getCurrentState().initMirror(); // To get autodiff optimization working
-
-        _unibody.emplace(
-            [this]() {
-                return _initColDelegate();
-            },
-            [this]() {
-                return hg::alvin::Body::createKinematic();
-            },
-            [this]() {
-                static constexpr cpFloat WIDTH  = 256.0;
-                static constexpr cpFloat HEIGHT = 128.0;
-                return hg::alvin::Shape::createBox(_unibody->body, WIDTH, HEIGHT);
-            });
-        _unibody->bindDelegate(*this);
+        _unibody.bindDelegate(*this);
     }
 }
 
@@ -44,7 +42,7 @@ void CharacterObject::init(int aOwningPlayerIndex, float aX, float aY) {
     self.y                 = aY;
     self.owningPlayerIndex = aOwningPlayerIndex;
 
-    cpBodySetPosition(*_unibody, cpv(aX, aY));
+    cpBodySetPosition(_unibody, cpv(aX, aY));
 }
 
 void CharacterObject::_eventUpdate1(spe::IfMaster) {
@@ -102,8 +100,9 @@ void CharacterObject::_eventDraw1() {
 
     const auto& self = _getCurrentState();
 
-    hg::gr::CircleShape circle{20.f};
+    hg::gr::CircleShape circle{32.f};
     circle.setFillColor(COLORS[self.owningPlayerIndex % NUM_COLORS]);
+    circle.setOrigin({32.f, 32.f});
     circle.setPosition({self.x, self.y});
     ccomp<MWindow>().getCanvas().draw(circle);
 
@@ -116,7 +115,9 @@ void CharacterObject::_eventDraw1() {
         text.setFillColor(hg::gr::COLOR_WHITE);
         text.setOutlineColor(hg::gr::COLOR_BLACK);
         text.setOutlineThickness(2.f);
-        text.setPosition({self.x, self.y});
+        const auto& localBounds = text.getLocalBounds();
+        text.setOrigin({localBounds.w / 2.f, localBounds.h / 2.f});
+        text.setPosition({self.x, self.y - 32.f});
         ccomp<MWindow>().getCanvas().draw(text);
     }
 }
