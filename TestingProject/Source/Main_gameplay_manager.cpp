@@ -32,7 +32,7 @@ MainGameplayManager::~MainGameplayManager() {
 void MainGameplayManager::setToHostMode(hg::PZInteger aPlayerCount) {
     HG_VALIDATE_PRECONDITION(_mode == Mode::UNINITIALIZED);
     _mode = Mode::HOST;
-    _startGame(aPlayerCount);
+    // _startGame(aPlayerCount);
 }
 
 void MainGameplayManager::setToClientMode() {
@@ -117,6 +117,10 @@ void MainGameplayManager::_eventUpdate1() {
 
 void MainGameplayManager::_eventDrawGUI() {
     // Do nothing
+    hg::gr::CircleShape circle{32.f};
+    circle.setFillColor(hg::gr::COLOR_RED);
+    circle.setPosition({60.f, 60.f});
+    ccomp<MWindow>().getCanvas().draw(circle);
 }
 
 void MainGameplayManager::_eventPostUpdate() {
