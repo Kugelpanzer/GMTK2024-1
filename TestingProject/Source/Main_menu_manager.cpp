@@ -178,9 +178,9 @@ private:
         HG_HARD_ASSERT(handle.has_value()); // TODO
         _dataModelHandle = *handle;
 
-        hg::rml::PreprocessRcssFile("assets/main_menu.rcss.fp");
+        hg::rml::PreprocessRcssFile("Assets/main_menu.rcss.fp");
         Rml::Factory::RegisterEventListenerInstancer(&_eventListenerInstancer);
-        _document = guiContext.LoadDocument("assets/main_menu.rml");
+        _document = guiContext.LoadDocument("Assets/main_menu.rml");
 
         if (_document) {
             _document->Show();

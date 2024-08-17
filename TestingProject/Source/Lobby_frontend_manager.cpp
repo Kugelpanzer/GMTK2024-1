@@ -264,8 +264,8 @@ public:
         HG_HARD_ASSERT(handle.has_value()); // TODO
         _dataModelHandle = *handle;
 
-        hg::rml::PreprocessRcssFile("assets/lobby.rcss.fp");
-        _document = guiContext.LoadDocument("assets/lobby.rml");
+        hg::rml::PreprocessRcssFile("Assets/lobby.rcss.fp");
+        _document = guiContext.LoadDocument("Assets/lobby.rml");
         if (_document) {
             _document->Show();
             _documentVisible = true;

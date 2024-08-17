@@ -16,14 +16,14 @@ int InitializeAndRunDebug() {
     ctx->startChildContext(-1);
 
     const int status = ctx->runFor(-1);
-    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    HG_LOG_INFO(LOG_ID, "Main context stopped with exit code {}.", status);
     return status;
 }
 
 int InitializeAndRunClient() {
     auto ctx = CreateBasicClientContext();
     const int status = ctx->runFor(-1);
-    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    HG_LOG_INFO(LOG_ID, "Main context stopped with exit code {}.", status);
     return status;
 }
 
@@ -35,7 +35,7 @@ int InitializeAndRunServer(int argc, char* argv[]) {
     };
     auto ctx = CreateServerContext(params);
     const int status = ctx->runFor(-1);
-    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    HG_LOG_INFO(LOG_ID, "Main context stopped with exit code {}.", status);
     return status;
     // clang-format on
 }
