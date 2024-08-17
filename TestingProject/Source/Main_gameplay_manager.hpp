@@ -12,10 +12,16 @@ public:
 
     ~MainGameplayManager() override;
 
+    void setToHostMode(hg::PZInteger aPlayerCount) override;
+    void setToClientMode() override;
+    Mode getMode() const override;
+
 private:
+    Mode _mode = Mode::UNINITIALIZED;
+
     hg::PZInteger stateBufferingLength = 0;
 
-    hg::PZInteger printBandwidthUsageCountdown = 120;
+    void _startGame(hg::PZInteger aPlayerCount);
 
     void _eventUpdate1() override;
     void _eventPostUpdate() override;

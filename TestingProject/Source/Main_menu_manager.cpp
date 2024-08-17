@@ -14,14 +14,14 @@ bool RegisterModel(Rml::DataModelConstructor& aDataModelCtor) {
 }
 
 struct MainMenuModel {
-    bool debugMode = false;
+    bool testMode = false;
 };
 
 template <>
 bool RegisterModel<MainMenuModel>(Rml::DataModelConstructor& aDataModelCtor) {
     auto handle = aDataModelCtor.RegisterStruct<MainMenuModel>();
     if (handle) {
-        handle.RegisterMember<bool>("debugMode", &MainMenuModel::debugMode);
+        handle.RegisterMember<bool>("testMode", &MainMenuModel::testMode);
     }
     return static_cast<bool>(handle);
 }
@@ -122,9 +122,9 @@ public:
     }
 
     void eventDrawGUI() {
-        const bool debugMode = CTX().hasChildContext();
-        if (_mainMenuModel.debugMode != debugMode) {
-            _mainMenuModel.debugMode = debugMode;
+        const bool testMode = CTX().hasChildContext();
+        if (_mainMenuModel.testMode != testMode) {
+            _mainMenuModel.testMode = testMode;
             _dataModelHandle.DirtyAllVariables();
         }
     }
@@ -157,7 +157,7 @@ private:
 
             THROW_IF_FALSE(RegisterModel<MainMenuModel>(constructor));
         
-            THROW_IF_FALSE(constructor.Bind("debugMode", &_mainMenuModel.debugMode));
+            THROW_IF_FALSE(constructor.Bind("testMode", &_mainMenuModel.testMode));
             // THROW_IF_FALSE(constructor.Bind("localName",    &_lobbyModel.localName));
             // THROW_IF_FALSE(constructor.Bind("isAuthorized", &_lobbyModel.isAuthorized));
             //THROW_IF_FALSE(constructor.BindEventCallback("LockIn",   &Impl::_onEvent,   this));

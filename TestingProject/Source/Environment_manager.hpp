@@ -4,8 +4,8 @@
 
 #include "Environment_manager_interface.hpp"
 
-#include <Hobgoblin/ChipmunkPhysics.hpp>
 #include <Hobgoblin/Alvin.hpp>
+#include <Hobgoblin/ChipmunkPhysics.hpp>
 #include <Hobgoblin/Utility/Grids.hpp>
 
 #include <memory>

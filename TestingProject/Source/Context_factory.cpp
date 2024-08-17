@@ -5,7 +5,6 @@
 
 #include "Engine.hpp"
 
-#include "Character.hpp"
 #include "Lobby_frontend_manager.hpp"
 #include "Main_gameplay_manager.hpp"
 #include "Player_controls.hpp"
@@ -19,7 +18,7 @@ constexpr auto TICK_RATE  = 60;
 constexpr auto INITIAL_STATE_BUFFERING_LENGTH = 2;
 constexpr auto TELEMETRY_CYCLE_LENGTH         = 300;
 
-constexpr auto PASSPHRASE = "GMTK-2024";
+constexpr auto PASSPHRASE = "GMTK-2024-HQ";
 
 bool MyRetransmitPredicate(hg::PZInteger             aCyclesSinceLastTransmit,
                            std::chrono::microseconds aTimeSinceLastSend,
@@ -126,6 +125,7 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
     // Main gameplay manager
     auto gpMgr =
         QAO_UPCreate<MainGameplayManager>(context->getQAORuntime().nonOwning(), PRIORITY_GAMEPLAYMGR);
+    gpMgr->setToHostMode(aParams.playerCount);
     context->attachAndOwnComponent(std::move(gpMgr));
 
     // QAO_PCreate<CharacterObject>(context->getQAORuntime(),
@@ -139,6 +139,11 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
 
 #define WINDOW_WIDTH  1200
 #define WINDOW_HEIGHT 800
+
+// Main Render Texture (MRT) size determines the resolution
+// at which the game will be rendered internally.
+#define MRT_WIDTH  1920
+#define MRT_HEIGHT 1080
 
 std::unique_ptr<spe::GameContext> CreateBasicClientContext() {
     auto context =
@@ -160,14 +165,16 @@ std::unique_ptr<spe::GameContext> CreateBasicClientContext() {
 #endif
     };
 
+    // clang-format off
     winMgr->setToNormalMode(
         spe::WindowManagerInterface::WindowConfig{
             hg::win::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT},
-            "SPeMPE Multiplayer Foundation",
+            "HUGE QUEST: THE GAME",
             hg::win::WindowStyle::Default
-    },
-        spe::WindowManagerInterface::MainRenderTextureConfig{{WINDOW_WIDTH, WINDOW_HEIGHT}},
+        },
+        spe::WindowManagerInterface::MainRenderTextureConfig{{MRT_WIDTH, MRT_HEIGHT}},
         timingConfig);
+    // clang-format on
     winMgr->setStopIfCloseClicked(true);
 
     struct FontFace {
@@ -263,5 +270,6 @@ void AttachGameplayManagers(spe::GameContext& aContext, const ClientGameParams& 
     // Gameplay manager
     auto gpMgr =
         QAO_UPCreate<MainGameplayManager>(aContext.getQAORuntime().nonOwning(), PRIORITY_GAMEPLAYMGR);
+    gpMgr->setToClientMode();
     aContext.attachAndOwnComponent(std::move(gpMgr));
 }

@@ -23,8 +23,8 @@
         <!-- WINDOW INTERIOR -->
         <div id="window-interior-holder" data-model="mainmenu-model">
 
-            <div data-if="debugMode == true" class="window-contents">
-                <p style="color: red;">!!!!! DEBUG MODE !!!!!</p>
+            <div data-if="testMode == true" class="window-contents">
+                <p style="color: red;">!!!!! TESTING MODE !!!!!</p>
             </div>
 
             <!-- FORM -->
