@@ -1,8 +1,3 @@
-// Copyright 2024 Jovan Batnozic. Released under MS-PL licence in Serbia.
-// See https://github.com/jbatnozic/Hobgoblin?tab=readme-ov-file#licence
-
-// clang-format off
-
 #pragma once
 
 #include "Engine.hpp"
@@ -40,5 +35,3 @@ private:
     void _syncDestroyImpl(spe::SyncControlDelegate& aSyncCtrl) const override;
     hg::alvin::CollisionDelegate _initColDelegate();
 };
-
-// clang-format on

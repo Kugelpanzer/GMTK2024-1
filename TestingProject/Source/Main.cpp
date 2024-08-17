@@ -7,7 +7,9 @@
 
 int InitializeAndRunClient() {
     auto ctx = CreateBasicClientContext();
-    return ctx->runFor(-1);
+    const int status = ctx->runFor(-1);
+    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    return status;
 }
 
 int InitializeAndRunServer(int argc, char* argv[]) {
@@ -17,7 +19,9 @@ int InitializeAndRunServer(int argc, char* argv[]) {
         .portNumber  = 8888
     };
     auto ctx = CreateServerContext(params);
-    return ctx->runFor(-1);
+    const int status = ctx->runFor(-1);
+    HG_LOG_INFO(LOG_ID, "Main context stopped (status = {}).", status);
+    return status;
     // clang-format on
 }
 

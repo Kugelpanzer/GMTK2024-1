@@ -3,9 +3,12 @@
 
 #include <Hobgoblin/Utility/Randomization.hpp>
 
-#include "Lobby_frontend_manager.hpp"
-#include "Player_controls.hpp"
+#include "Engine.hpp"
+
 #include "Character.hpp"
+#include "Lobby_frontend_manager.hpp"
+#include "Main_gameplay_manager.hpp"
+#include "Player_controls.hpp"
 
 #include "Main_menu_manager.hpp" // TODO(temp.)
 
@@ -14,6 +17,7 @@ constexpr auto FRAME_RATE = 60;
 constexpr auto TICK_RATE  = 60;
 
 constexpr auto INITIAL_STATE_BUFFERING_LENGTH = 2;
+constexpr auto TELEMETRY_CYCLE_LENGTH         = 300;
 
 constexpr auto PASSPHRASE = "GMTK-2024";
 
@@ -68,13 +72,21 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
     auto& server = netMgr->getServer();
     server.setTimeoutLimit(std::chrono::seconds{5});
     server.setRetransmitPredicate(&MyRetransmitPredicate);
-    server.start(clientCount);
+    server.start(aParams.portNumber);
 
-    // std::printf("Server started on port %d for up to %d clients.\n",
-    //             (int)server.getLocalPort(),
-    //             aPlayerCount - 1);
-    netMgr->setTelemetryCycleLimit(120);
+    HG_LOG_INFO(LOG_ID,
+                "Server started on port {} for {} players.",
+                server.getLocalPort(),
+                aParams.playerCount - 1);
+
+    netMgr->setTelemetryCycleLimit(TELEMETRY_CYCLE_LENGTH);
     context->attachAndOwnComponent(std::move(netMgr));
+
+    // Telemetry reporter
+    QAO_PCreate<spe::NetworkingTelemetryReporter>(
+        context->getQAORuntime(),
+        0,
+        spe::NetworkingTelemetryReporter::Config{TELEMETRY_CYCLE_LENGTH});
 
     // Input sync manager
     auto insMgr = QAO_UPCreate<spe::DefaultInputSyncManager>(context->getQAORuntime().nonOwning(),
@@ -88,9 +100,6 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
     auto svmMgr = QAO_UPCreate<spe::DefaultSyncedVarmapManager>(context->getQAORuntime().nonOwning(),
                                                                 PRIORITY_VARMAPMGR);
     svmMgr->setToMode(spe::SyncedVarmapManagerInterface::Mode::Host);
-    // for (hg::PZInteger i = 0; i < aPlayerCount; i += 1) {
-    //     svmMgr->int64SetClientWritePermission("val" + std::to_string(i), i, true);
-    // }
     context->attachAndOwnComponent(std::move(svmMgr));
 
     // Lobby backend manager
@@ -115,14 +124,14 @@ std::unique_ptr<spe::GameContext> CreateServerContext(const ServerGameParams& aP
     context->attachAndOwnComponent(std::move(authMgr));
 
     // Main gameplay manager
-    // auto gpMgr = std::make_unique<MainGameplayManager>(context->getQAORuntime().nonOwning(),
-    //                                                    PRIORITY_GAMEPLAYMGR);
-    // context->attachAndOwnComponent(std::move(gpMgr));
-    QAO_PCreate<CharacterObject>(context->getQAORuntime(),
-                                 context->getComponent<MNetworking>().getRegistryId(),
-                                 spe::SYNC_ID_NEW);
+    auto gpMgr =
+        QAO_UPCreate<MainGameplayManager>(context->getQAORuntime().nonOwning(), PRIORITY_GAMEPLAYMGR);
+    context->attachAndOwnComponent(std::move(gpMgr));
 
-    
+    // QAO_PCreate<CharacterObject>(context->getQAORuntime(),
+    //                              context->getComponent<MNetworking>().getRegistryId(),
+    //                              spe::SYNC_ID_NEW);
+
     return context;
 }
 
@@ -181,8 +190,8 @@ std::unique_ptr<spe::GameContext> CreateBasicClientContext() {
     context->attachAndOwnComponent(std::move(winMgr));
 
     // Main menu manager
-    auto mmMgr = QAO_UPCreate<MainMenuManager>(context->getQAORuntime().nonOwning(),
-                                               PRIORITY_MAINMENUMGR);
+    auto mmMgr =
+        QAO_UPCreate<MainMenuManager>(context->getQAORuntime().nonOwning(), PRIORITY_MAINMENUMGR);
     context->attachAndOwnComponent(std::move(mmMgr));
 
     return context;
@@ -193,19 +202,26 @@ void AttachGameplayManagers(spe::GameContext& aContext, const ClientGameParams& 
     auto netMgr = QAO_UPCreate<spe::DefaultNetworkingManager>(aContext.getQAORuntime().nonOwning(),
                                                               PRIORITY_NETWORKMGR,
                                                               INITIAL_STATE_BUFFERING_LENGTH);
-    netMgr->setToClientMode(RN_Protocol::UDP, "minimal-multiplayer", 1024, RN_NetworkingStack::Default);
+    netMgr->setToClientMode(RN_Protocol::UDP, PASSPHRASE, 1024, RN_NetworkingStack::Default);
     auto& client = netMgr->getClient();
     client.setTimeoutLimit(std::chrono::seconds{5});
     client.setRetransmitPredicate(&MyRetransmitPredicate);
     client.connect(aParams.localPortNumber, aParams.hostIpAddress, aParams.hostPortNumber);
 
-    // std::printf("Client started on port %d (connecting to %s:%d)\n",
-    //             (int)client.getLocalPort(),
-    //             aRemoteIp.c_str(),
-    //             (int)aRemotePort);
+    HG_LOG_INFO(LOG_ID,
+                "Client started on port {} (connecting to {}:{}).",
+                client.getLocalPort(),
+                aParams.hostIpAddress,
+                aParams.hostPortNumber);
 
-    netMgr->setTelemetryCycleLimit(120);
+    netMgr->setTelemetryCycleLimit(TELEMETRY_CYCLE_LENGTH);
     aContext.attachAndOwnComponent(std::move(netMgr));
+
+    // Telemetry reporter
+    QAO_PCreate<spe::NetworkingTelemetryReporter>(
+        aContext.getQAORuntime(),
+        0,
+        spe::NetworkingTelemetryReporter::Config{TELEMETRY_CYCLE_LENGTH});
 
     // Input sync manager
     auto insMgr = QAO_UPCreate<spe::DefaultInputSyncManager>(aContext.getQAORuntime().nonOwning(),
@@ -245,7 +261,7 @@ void AttachGameplayManagers(spe::GameContext& aContext, const ClientGameParams& 
     aContext.attachAndOwnComponent(std::move(authMgr));
 
     // Gameplay manager
-    // auto gpMgr =
-    //     QAO_UPCreate<MainGameplayManager>(aContext.getQAORuntime().nonOwning(), PRIORITY_GAMEPLAYMGR);
-    // aContext.attachAndOwnComponent(std::move(gpMgr));
+    auto gpMgr =
+        QAO_UPCreate<MainGameplayManager>(aContext.getQAORuntime().nonOwning(), PRIORITY_GAMEPLAYMGR);
+    aContext.attachAndOwnComponent(std::move(gpMgr));
 }

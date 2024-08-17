@@ -11,6 +11,9 @@ namespace spe = ::jbatnozic::spempe;
 using namespace hg::qao; // All names from QAO are prefixed with QAO_
 using namespace hg::rn;  // All names from RigelNet are prefixed with RN_
 
+using hg::AvoidNull;
+using hg::NeverNull;
+
 inline constexpr auto LOG_ID = "GMTK2024";
 
 using MInput        = spe::InputSyncManagerInterface;
